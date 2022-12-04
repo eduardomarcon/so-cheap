@@ -19,7 +19,7 @@ type PGItem struct {
 }
 
 func (p PGItem) Insert(item entity.Item) (int, error) {
-	query := `insert into item (description, amount, price) values ($1, $2, $3) RETURNING id`
+	query := `insert into itens (description, amount, price) values ($1, $2, $3) RETURNING id`
 	lastInsertId := 0
 	err := p.db.QueryRow(query, item.Description, item.Amount, item.Price).Scan(&lastInsertId)
 	if err != nil {
@@ -29,7 +29,7 @@ func (p PGItem) Insert(item entity.Item) (int, error) {
 }
 
 func (p PGItem) Update(item entity.Item) error {
-	query := `update item set description = $2, amount = $3, price = $4 where id = $1`
+	query := `update itens set description = $2, amount = $3, price = $4 where id = $1`
 	_, err := p.db.Exec(query, item.ID, item.Description, item.Amount, item.Price)
 	if err != nil {
 		return err
@@ -38,7 +38,7 @@ func (p PGItem) Update(item entity.Item) error {
 }
 
 func (p PGItem) Delete(id int64) error {
-	query := `delete from item where id = $1`
+	query := `delete from itens where id = $1`
 	_, err := p.db.Exec(query, id)
 	if err != nil {
 		return err
@@ -48,7 +48,7 @@ func (p PGItem) Delete(id int64) error {
 
 func (p PGItem) FindOne(id int64) (entity.Item, error) {
 	item := entity.Item{}
-	query := `select * from item where id = $1`
+	query := `select * from itens where id = $1`
 	row := p.db.QueryRow(query, id)
 	err := row.Scan(&item.ID, &item.Description, &item.Amount, &item.Price)
 	if err != nil {
@@ -59,7 +59,7 @@ func (p PGItem) FindOne(id int64) (entity.Item, error) {
 
 func (p PGItem) FindAll() ([]entity.Item, error) {
 	var itens []entity.Item
-	query := `select * from item`
+	query := `select * from itens`
 	row, err := p.db.Query(query)
 	if err != nil {
 		return itens, err
