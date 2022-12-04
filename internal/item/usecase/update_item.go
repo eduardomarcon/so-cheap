@@ -5,14 +5,17 @@ import (
 	"so-cheap/internal/item/entity"
 )
 
-func InsertItem(item entity.Item) (int, error) {
+func UpdateItem(item entity.Item) error {
 	itemRepository, err := database.NewItemRepository()
 	if err != nil {
-		return 0, err
+		return err
 	}
-	id, err := itemRepository.Insert(item)
+	if _, err := itemRepository.FindOne(item.ID); err != nil {
+		return err
+	}
+	err = itemRepository.Update(item)
 	if err != nil {
-		return 0, err
+		return err
 	}
-	return id, nil
+	return nil
 }

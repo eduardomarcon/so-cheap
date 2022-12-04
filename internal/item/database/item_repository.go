@@ -7,7 +7,7 @@ import (
 )
 
 type ItemRepository interface {
-	Insert(item entity.Item) error
+	Insert(item entity.Item) (int, error)
 	Update(item entity.Item) error
 	Delete(id int64) error
 	FindOne(id int64) (entity.Item, error)
@@ -18,13 +18,14 @@ type PGItem struct {
 	db *sql.DB
 }
 
-func (p PGItem) Insert(item entity.Item) error {
-	query := `insert into item (description, amount, price) values ($1, $2, $3)`
-	_, err := p.db.Exec(query, item.Description, item.Amount, item.Price)
+func (p PGItem) Insert(item entity.Item) (int, error) {
+	query := `insert into item (description, amount, price) values ($1, $2, $3) RETURNING id`
+	lastInsertId := 0
+	err := p.db.QueryRow(query, item.Description, item.Amount, item.Price).Scan(&lastInsertId)
 	if err != nil {
-		return err
+		return 0, err
 	}
-	return nil
+	return lastInsertId, nil
 }
 
 func (p PGItem) Update(item entity.Item) error {
