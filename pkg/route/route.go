@@ -3,6 +3,7 @@ package route
 import (
 	"github.com/gofiber/fiber/v2"
 	itementrypoint "so-cheap/internal/item/entrypoint"
+	orderentrypoint "so-cheap/internal/order/entrypoint"
 	userentrypoint "so-cheap/internal/user/entrypoint"
 )
 
@@ -20,4 +21,10 @@ func Routes(a *fiber.App) {
 	route.Get("itens/:id", itementrypoint.GetItem)
 	route.Get("itens", itementrypoint.GetItens)
 	route.Delete("itens/:id", itementrypoint.DeleteItem)
+
+	route.Post("orders", orderentrypoint.CreateOrder)
+	route.Put("orders/:id", orderentrypoint.UpdateOrder)
+	route.Get("orders/:id", orderentrypoint.GetOrder)
+	route.Get("orders", orderentrypoint.GetOrders)
+	route.Delete("orders/:id", orderentrypoint.DeleteOrder)
 }
