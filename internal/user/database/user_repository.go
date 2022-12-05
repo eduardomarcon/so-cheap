@@ -19,7 +19,7 @@ type PGUser struct {
 }
 
 func (p PGUser) Insert(user entity.User) (int, error) {
-	query := `insert into users (name, email) values ($1, $2) RETURNING id`
+	query := `insert into users (name, email, password) values ($1, $2, $3) RETURNING id`
 	lastInsertId := 0
 	err := p.db.QueryRow(query, user.Name, user.Email).Scan(&lastInsertId)
 	if err != nil {
