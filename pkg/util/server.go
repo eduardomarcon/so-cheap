@@ -5,6 +5,7 @@ import (
 	"log"
 	"os"
 	"os/signal"
+	"so-cheap/internal/config"
 )
 
 func StartServerWithGracefulShutdown(a *fiber.App) {
@@ -22,7 +23,7 @@ func StartServerWithGracefulShutdown(a *fiber.App) {
 		close(idleConnsClosed)
 	}()
 
-	if err := a.Listen(os.Getenv("SERVER_URL")); err != nil {
+	if err := a.Listen(config.GetServer().URL); err != nil {
 		log.Printf("Oops... Server is not running! Reason: %v", err)
 	}
 
