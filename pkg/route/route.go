@@ -5,26 +5,28 @@ import (
 	itementrypoint "so-cheap/internal/item/entrypoint"
 	orderentrypoint "so-cheap/internal/order/entrypoint"
 	userentrypoint "so-cheap/internal/user/entrypoint"
+	"so-cheap/pkg/mid"
 )
 
 func Routes(a *fiber.App) {
 	route := a.Group("/api/v1")
 
 	route.Post("users", userentrypoint.CreateUser)
-	route.Put("users/:id", userentrypoint.UpdateUser)
-	route.Get("users/:id", userentrypoint.GetUser)
-	route.Get("users", userentrypoint.GetUsers)
-	route.Delete("users/:id", userentrypoint.DeleteUser)
+	route.Post("users/authenticate", userentrypoint.AuthenticateUser)
+	route.Put("users/:id", mid.JWTProtected(), userentrypoint.UpdateUser)
+	route.Get("users/:id", mid.JWTProtected(), userentrypoint.GetUser)
+	route.Get("users", mid.JWTProtected(), userentrypoint.GetUsers)
+	route.Delete("users/:id", mid.JWTProtected(), userentrypoint.DeleteUser)
 
-	route.Post("itens", itementrypoint.CreateItem)
-	route.Put("itens/:id", itementrypoint.UpdateItem)
-	route.Get("itens/:id", itementrypoint.GetItem)
-	route.Get("itens", itementrypoint.GetItens)
-	route.Delete("itens/:id", itementrypoint.DeleteItem)
+	route.Post("itens", mid.JWTProtected(), itementrypoint.CreateItem)
+	route.Put("itens/:id", mid.JWTProtected(), itementrypoint.UpdateItem)
+	route.Get("itens/:id", mid.JWTProtected(), itementrypoint.GetItem)
+	route.Get("itens", mid.JWTProtected(), itementrypoint.GetItens)
+	route.Delete("itens/:id", mid.JWTProtected(), itementrypoint.DeleteItem)
 
-	route.Post("orders", orderentrypoint.CreateOrder)
-	route.Put("orders/:id", orderentrypoint.UpdateOrder)
-	route.Get("orders/:id", orderentrypoint.GetOrder)
-	route.Get("orders", orderentrypoint.GetOrders)
-	route.Delete("orders/:id", orderentrypoint.DeleteOrder)
+	route.Post("orders", mid.JWTProtected(), orderentrypoint.CreateOrder)
+	route.Put("orders/:id", mid.JWTProtected(), orderentrypoint.UpdateOrder)
+	route.Get("orders/:id", mid.JWTProtected(), orderentrypoint.GetOrder)
+	route.Get("orders", mid.JWTProtected(), orderentrypoint.GetOrders)
+	route.Delete("orders/:id", mid.JWTProtected(), orderentrypoint.DeleteOrder)
 }
