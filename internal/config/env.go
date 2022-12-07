@@ -11,12 +11,17 @@ var cfg *config
 
 type config struct {
 	Server ServerConfig
+	JWT    JWTConfig
 	DB     DBConfig
 }
 
 type ServerConfig struct {
 	URL     string
 	TimeOut int
+}
+type JWTConfig struct {
+	SecretKey     string
+	ExpireMinutes int
 }
 
 type DBConfig struct {
@@ -43,6 +48,12 @@ func LoadEnvs() {
 		TimeOut: readTimeOut,
 	}
 
+	expireMinutes, _ := strconv.Atoi(os.Getenv("SECRET_KEY_EXPIRE_MINUTES"))
+	cfg.JWT = JWTConfig{
+		SecretKey:     os.Getenv("JWT_SECRET_KEY"),
+		ExpireMinutes: expireMinutes,
+	}
+
 	cfg.DB = DBConfig{
 		URL:         os.Getenv("DB_SERVER_URL"),
 		Max:         maxConnection,
@@ -53,6 +64,10 @@ func LoadEnvs() {
 
 func GetServer() ServerConfig {
 	return cfg.Server
+}
+
+func GetJWT() JWTConfig {
+	return cfg.JWT
 }
 
 func GetDB() DBConfig {
