@@ -1,7 +1,9 @@
 package main
 
 import (
+	"database/sql"
 	"encoding/json"
+	_ "github.com/lib/pq"
 	amqp "github.com/rabbitmq/amqp091-go"
 	"log"
 )
@@ -11,7 +13,7 @@ type Order struct {
 }
 
 func main() {
-	conn, err := amqp.Dial("amqp://guest:guest@localhost:5672/")
+	conn, err := amqp.Dial("amqp://guest:guest@message-broker:5672/")
 	failOnError(err, "Failed to connect to RabbitMQ")
 	defer conn.Close()
 
@@ -19,8 +21,14 @@ func main() {
 	failOnError(err, "Failed to open a channel")
 	defer ch.Close()
 
-	db, err := openConnection()
-	failOnError(err, "Failed to open a connection db")
+	db, err := sql.Open("postgres", "host=db-so-cheap port=5432 user=admin password=admin dbname=so-cheap sslmode=disable")
+	if err != nil {
+		failOnError(err, "failed to open db connection")
+	}
+	err = db.Ping()
+	if err != nil {
+		failOnError(err, "failed to ping db connection")
+	}
 
 	q, err := ch.QueueDeclare(
 		"transport",
@@ -54,8 +62,9 @@ func main() {
 			failOnError(err, "Failed to convert body to json")
 
 			log.Println(order)
-			err = updateOrderToSended(db, order.ID)
-			failOnError(err, "Failed to update the status order")
+			if _, err = db.Exec("update orders set status = $2 where id = $1", order.ID, 3); err != nil {
+				failOnError(err, "Failed to update the status order")
+			}
 		}
 	}()
 
