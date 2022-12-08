@@ -13,6 +13,7 @@ type config struct {
 	Server ServerConfig
 	JWT    JWTConfig
 	DB     DBConfig
+	AMQP   AMQPConfig
 }
 
 type ServerConfig struct {
@@ -29,6 +30,10 @@ type DBConfig struct {
 	Max         int
 	MaxIdle     int
 	MaxLifeTime int
+}
+
+type AMQPConfig struct {
+	URL string
 }
 
 func LoadEnvs() {
@@ -60,6 +65,10 @@ func LoadEnvs() {
 		MaxIdle:     maxIdle,
 		MaxLifeTime: maxLifeTime,
 	}
+
+	cfg.AMQP = AMQPConfig{
+		URL: os.Getenv("AMQP_SERVER_URL"),
+	}
 }
 
 func GetServer() ServerConfig {
@@ -72,4 +81,8 @@ func GetJWT() JWTConfig {
 
 func GetDB() DBConfig {
 	return cfg.DB
+}
+
+func GetAMQP() AMQPConfig {
+	return cfg.AMQP
 }
