@@ -11,7 +11,7 @@ type UserRepository interface {
 	Update(user entity.User) error
 	Delete(id int64) error
 	FindOne(id int64) (entity.User, error)
-	FindOneByEmailAndPassword(email string, password string) (entity.User, error)
+	FindOneByEmail(email string) (entity.User, error)
 	FindAll() ([]entity.User, error)
 }
 
@@ -22,7 +22,7 @@ type PGUser struct {
 func (p PGUser) Insert(user entity.User) (int, error) {
 	query := `insert into users (name, email, password) values ($1, $2, $3) RETURNING id`
 	lastInsertId := 0
-	err := p.db.QueryRow(query, user.Name, user.Email).Scan(&lastInsertId)
+	err := p.db.QueryRow(query, user.Name, user.Email, user.Password).Scan(&lastInsertId)
 	if err != nil {
 		return 0, err
 	}
@@ -58,11 +58,11 @@ func (p PGUser) FindOne(id int64) (entity.User, error) {
 	return user, nil
 }
 
-func (p PGUser) FindOneByEmailAndPassword(email string, password string) (entity.User, error) {
+func (p PGUser) FindOneByEmail(email string) (entity.User, error) {
 	user := entity.User{}
-	query := `select id, name, email from users where email = $1 and password = $2`
-	row := p.db.QueryRow(query, email, password)
-	err := row.Scan(&user.ID, &user.Name, &user.Email)
+	query := `select email, password from users where email = $1`
+	row := p.db.QueryRow(query, email)
+	err := row.Scan(&user.Email, &user.Password)
 	if err != nil {
 		return user, err
 	}
