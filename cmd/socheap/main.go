@@ -15,5 +15,6 @@ func main() {
 	app := fiber.New(fiberConfig)
 
 	route.Routes(app)
+	util.StartTimers()
 	util.StartServerWithGracefulShutdown(app)
 }

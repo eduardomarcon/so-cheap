@@ -6,7 +6,17 @@ import (
 	"os"
 	"os/signal"
 	"so-cheap/internal/config"
+	"so-cheap/internal/order/usecase"
 )
+
+func StartTimers() {
+	go func() {
+		err := usecase.TimerSendPayedOrders()
+		if err != nil {
+			log.Fatal(err)
+		}
+	}()
+}
 
 func StartServerWithGracefulShutdown(a *fiber.App) {
 	idleConnsClosed := make(chan struct{})

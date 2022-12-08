@@ -13,6 +13,7 @@ type OrderRepository interface {
 	Delete(id uint64) error
 	FindOne(id uint64) (entity.Order, error)
 	FindAll() ([]entity.Order, error)
+	FindAllByStatus(status entity.OrderStatus) ([]entity.Order, error)
 }
 
 type PGOrder struct {
@@ -98,6 +99,25 @@ func (p PGOrder) FindAll() ([]entity.Order, error) {
 	var orders []entity.Order
 	query := `select * from orders`
 	row, err := p.db.Query(query)
+	if err != nil {
+		return orders, err
+	}
+
+	var order entity.Order
+	for row.Next() {
+		err = row.Scan(&order.ID, &order.IDUser, &order.Status, &order.Total)
+		if err != nil {
+			return orders, err
+		}
+		orders = append(orders, order)
+	}
+	return orders, nil
+}
+
+func (p PGOrder) FindAllByStatus(status entity.OrderStatus) ([]entity.Order, error) {
+	var orders []entity.Order
+	query := `select * from orders where status = $1`
+	row, err := p.db.Query(query, status)
 	if err != nil {
 		return orders, err
 	}
