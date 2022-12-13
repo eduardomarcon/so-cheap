@@ -10,6 +10,7 @@ import (
 type OrderRepository interface {
 	Insert(order entity.Order) (int, error)
 	Update(order entity.Order) error
+	UpdateStatus(id uint64, status entity.OrderStatus) error
 	Delete(id uint64) error
 	FindOne(id uint64) (entity.Order, error)
 	FindAll() ([]entity.Order, error)
@@ -64,6 +65,15 @@ func (p PGOrder) Insert(order entity.Order) (int, error) {
 func (p PGOrder) Update(order entity.Order) error {
 	query := `update orders set id_user = $2, status = $3, total = $4 where id = $1`
 	_, err := p.db.Exec(query, order.ID, order.IDUser, order.Status, order.Total)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func (p PGOrder) UpdateStatus(id uint64, status entity.OrderStatus) error {
+	query := `update orders set status = $2 where id = $1`
+	_, err := p.db.Exec(query, id, status)
 	if err != nil {
 		return err
 	}

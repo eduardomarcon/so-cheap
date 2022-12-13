@@ -26,6 +26,7 @@ func Routes(a *fiber.App) {
 
 	route.Post("orders", mid.JWTProtected(), orderentrypoint.CreateOrder)
 	route.Put("orders/:id", mid.JWTProtected(), orderentrypoint.UpdateOrder)
+	route.Put("orders/:id/pay", mid.JWTProtected(), orderentrypoint.PayOrder)
 	route.Get("orders/:id", mid.JWTProtected(), orderentrypoint.GetOrder)
 	route.Get("orders", mid.JWTProtected(), orderentrypoint.GetOrders)
 	route.Delete("orders/:id", mid.JWTProtected(), orderentrypoint.DeleteOrder)

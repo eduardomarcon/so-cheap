@@ -106,6 +106,46 @@ func UpdateOrder(c *fiber.Ctx) error {
 	})
 }
 
+func PayOrder(c *fiber.Ctx) error {
+	now := time.Now().Unix()
+	claims, err := util.ExtractTokenMetadata(c)
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"error": true,
+			"msg":   err.Error(),
+		})
+	}
+
+	expires := claims.Expires
+
+	if now > expires {
+		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
+			"error": true,
+			"msg":   "unauthorized, check expiration time of your token",
+		})
+	}
+
+	id, err := strconv.ParseUint(c.Params("id"), 10, 64)
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"error": true,
+			"msg":   err.Error(),
+		})
+	}
+
+	if err := usecase.PayOrder(id); err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"error": true,
+			"msg":   err.Error(),
+		})
+	}
+
+	return c.Status(fiber.StatusNoContent).JSON(fiber.Map{
+		"error": false,
+		"msg":   nil,
+	})
+}
+
 func GetOrder(c *fiber.Ctx) error {
 	now := time.Now().Unix()
 	claims, err := util.ExtractTokenMetadata(c)
