@@ -53,7 +53,7 @@ func LoadEnvs() {
 		TimeOut: readTimeOut,
 	}
 
-	expireMinutes, _ := strconv.Atoi(os.Getenv("SECRET_KEY_EXPIRE_MINUTES"))
+	expireMinutes, _ := strconv.Atoi(os.Getenv("JWT_SECRET_KEY_EXPIRE_MINUTES_COUNT"))
 	cfg.JWT = JWTConfig{
 		SecretKey:     os.Getenv("JWT_SECRET_KEY"),
 		ExpireMinutes: expireMinutes,
