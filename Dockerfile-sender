@@ -7,7 +7,9 @@ COPY go.sum .
 
 RUN go mod download
 
-FROM golang:1.19.3 as build
+FROM golang:alpine as build
+
+RUN apk --no-cache add tzdata
 
 WORKDIR /go/src/socheap
 
@@ -21,6 +23,8 @@ FROM scratch as image
 
 COPY --from=build /go/src/socheap/socheap .
 COPY --from=build /go/src/socheap/.env .
+COPY --from=build /usr/share/zoneinfo /usr/share/zoneinfo
+ENV TZ=America/Sao_Paulo
 
 EXPOSE 8080
 
