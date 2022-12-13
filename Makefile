@@ -21,8 +21,11 @@ runapp:
 stopapp:
 	docker-compose down
 
+migratedown:
+	migrate -source file://$(PWD)/pkg/migrations -database postgres://admin:admin@localhost:5432/so-cheap?sslmode=disable down
+
 stopdb:
 	docker stop db-so-cheap
 
-migratedown:
-	migrate -source file://$(PWD)/pkg/migrations -database postgres://admin:admin@localhost:5432/so-cheap?sslmode=disable down
+removenetwork:
+	docker network rm dev-network
