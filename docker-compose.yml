@@ -43,3 +43,4 @@ networks:
   dev-network:
     name: dev-network
     driver: bridge
+    external: true

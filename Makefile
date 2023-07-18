@@ -13,7 +13,8 @@ updb:
 		postgres:15.1
 
 migrateup:
-	migrate -source file://$(PWD)/pkg/migrations -database postgres://admin:admin@localhost:5432/so-cheap?sslmode=disable up
+	docker run -v $(PWD)/pkg/migrations:/migrations --network host migrate/migrate \
+		-path=/migrations/ -database postgres://admin:admin@localhost:5432/so-cheap?sslmode=disable up
 
 runapp:
 	docker-compose up -d --build
@@ -22,7 +23,8 @@ stopapp:
 	docker-compose down
 
 migratedown:
-	migrate -source file://$(PWD)/pkg/migrations -database postgres://admin:admin@localhost:5432/so-cheap?sslmode=disable down
+	docker run -v $(PWD)/pkg/migrations:/migrations --network host migrate/migrate \
+		-path=/migrations/ -database postgres://admin:admin@localhost:5432/so-cheap?sslmode=disable down 4
 
 stopdb:
 	docker stop db-so-cheap
