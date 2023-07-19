@@ -6,6 +6,7 @@ import (
 	_ "github.com/lib/pq"
 	amqp "github.com/rabbitmq/amqp091-go"
 	"log"
+	"so-cheap/internal/config"
 )
 
 type Order struct {
@@ -13,7 +14,8 @@ type Order struct {
 }
 
 func main() {
-	conn, err := amqp.Dial("amqp://guest:guest@message-broker:5672/")
+	config.LoadEnvs()
+	conn, err := amqp.Dial(config.GetAMQP().URL)
 	failOnError(err, "Failed to connect to RabbitMQ")
 	defer conn.Close()
 
@@ -21,7 +23,7 @@ func main() {
 	failOnError(err, "Failed to open a channel")
 	defer ch.Close()
 
-	db, err := sql.Open("postgres", "host=db-so-cheap port=5432 user=admin password=admin dbname=so-cheap sslmode=disable")
+	db, err := sql.Open("postgres", config.GetDB().URL)
 	if err != nil {
 		failOnError(err, "failed to open db connection")
 	}
