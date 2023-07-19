@@ -5,11 +5,11 @@ services:
     image: rabbitmq:3-management-alpine
     container_name: message-broker
     ports:
-      - 5672:5672
-      - 15672:15672
+      - "5672:5672"
+      - "15672:15672"
     volumes:
-      - /Users/marcon/desenvolvimento/go/messages/amqp/dev-rabbitmq/data/:/var/lib/rabbitmq
-      - /Users/marcon/desenvolvimento/go/messages/amqp/dev-rabbitmq/log/:/var/log/rabbitmq
+      - ./data/rabbitmq:/var/lib/rabbitmq
+      - ./data/rabbitmq:/var/log/rabbitmq
     restart: always
     networks:
       - dev-network

@@ -8,7 +8,7 @@ updb:
 		-e POSTGRES_USER=admin \
 		-e POSTGRES_PASSWORD=admin \
 		-e POSTGRES_DB=so-cheap \
-		-v /Users/marcon/desenvolvimento/go/databases/so-cheap/data:/var/lib/postgresql \
+		-v $(PWD)/data/postgresql:/var/lib/postgresql \
 		-p 5432:5432 \
 		postgres:15.1
 
